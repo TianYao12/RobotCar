@@ -10,8 +10,10 @@ int PWMB = 6;
 int BIN1 = 8;
 
 float t; // time in milliseconds
-float rate = 2.45; // rate of linear movement = 2.45ft/sec
+float v; ; // rate of linear movement = 2.45ft/sec
 float w = 398; // angular velocity = 398 degrees/sec
+
+int customMotor = 150;
 
 void setup() {
   // initialize 
@@ -25,31 +27,47 @@ void setup() {
   digitalWrite(PWMB, HIGH);
 }
 
+void loop() {
+  moveRobot();
+  setMotorSpeed(customMotor,customMotor);
+  forward(1);
+  stationary(); 
+  while(true) {
+    
+  }
+}
+
+void setMotorSpeed(int speedR, int speedL) {
+  analogWrite(PWMA, speedR);
+  analogWrite(PWMB, speedL);
+}
+
 void moveRobot() {
   digitalWrite(STBY, HIGH);
 }
 
-void stationary(float t) {
+void stationary() {
   digitalWrite(STBY, LOW);
-  delay(t*1000); 
+  delay(2000); 
 }
 
 void forward(float d) {
   moveRobot();
   digitalWrite(AIN1, HIGH);
   digitalWrite(BIN1, HIGH); 
-  t = (d/2.45) * 1000; 
+  v = 0.0075*customMotor + 0.35;
+  t = (d/v) * 1000; 
   delay(t);  
-  stationary(1);
+  stationary();
 }
 
 void backward(float d) {
   moveRobot();
   digitalWrite(AIN1, LOW);
   digitalWrite(BIN1, LOW);
-  t = (d/2.45) * 1000; // rate = 2.45ft/sec
+  t = (d/v) * 1000; // rate = 2.45ft/sec
   delay(t);  
-  stationary(1); 
+  stationary(); 
 }
 
 void left(int deg) {
@@ -58,7 +76,7 @@ void left(int deg) {
   digitalWrite(BIN1, LOW);
   t = (deg/398.) * 1000;
   delay(t);
-  stationary(1);
+  stationary();
 }
 
 void right(int deg) {
@@ -67,14 +85,6 @@ void right(int deg) {
   digitalWrite(BIN1, HIGH);
   t = (deg/398) * 1000;
   delay(t);
-  stationary(1);
+  stationary();
 } 
 
-void loop() {
-  moveRobot();
-  left(90);
-  stationary(1); 
-  while(true) {
-    
-  }
-}
